@@ -1,4 +1,23 @@
 
+import { db } from '../db';
+import { usersTable } from '../db/schema';
 import { type User } from '../schema';
+import { eq } from 'drizzle-orm';
 
-export declare function getUserById(id: string): Promise<User | null>;
+export const getUserById = async (id: string): Promise<User | null> => {
+  try {
+    const result = await db.select()
+      .from(usersTable)
+      .where(eq(usersTable.id, id))
+      .execute();
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error('Get user by ID failed:', error);
+    throw error;
+  }
+};
